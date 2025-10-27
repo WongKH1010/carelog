@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+{% block style %}
+<style>
+    body {
+        background: rgba(243, 189, 198, 0.329);
+        min-height: 100vh;
+    }
+
+    /* Form Card Styling */
+    .form-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        border: none;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-card-header {
+        background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134));
+        color: white;
+        padding: 2rem;
+        border: none;
+        text-align: center;
+    }
+
+    .form-card-header h3 {
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        font-size: 1.75rem;
+    }
+
+    .form-card-header h3 i {
+        font-size: 2rem;
+    }
+
+    .form-card-header p {
+        margin: 0.75rem 0 0 0;
+        opacity: 0.95;
+        font-size: 1rem;
+    }
+
+    .form-card-body {
+        padding: 2.5rem;
+    }
+
+    /* Form Styling */
+    .form-group {
+        margin-bottom: 1.75rem;
+    }
+
+    .form-label, label {
+        color: #764ba2;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-label i, label i {
+        color: rgb(216, 63, 147);
+        font-size: 1.1rem;
+    }
+
+    .form-control, .form-select, textarea.form-control, select.form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 0.85rem 1.15rem;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        background: white;
+    }
+
+    .form-control:focus, .form-select:focus, textarea.form-control:focus, select.form-control:focus {
+        border-color: rgb(216, 63, 147);
+        box-shadow: 0 0 0 0.25rem rgba(216, 63, 147, 0.15);
+        transform: translateY(-2px);
+        background: white;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-control::placeholder {
+        color: #b0b0b0;
+        font-style: italic;
+    }
+
+    /* Required Field Indicator */
+    .form-label.required::after, label.required::after {
+        content: "*";
+        color: rgb(216, 63, 147);
+        margin-left: 0.25rem;
+        font-weight: 700;
+    }
+
+    /* Submit Button Styling */
+    .btn-primary:not(.signup-button) {
+        background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134));
+        border: none;
+        border-radius: 12px;
+        padding: 0.9rem 2.5rem;
+        font-weight: 600;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(216, 63, 147, 0.3);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 25px rgba(216, 63, 147, 0.5);
+        background: linear-gradient(135deg, rgb(173, 42, 134), rgb(216, 63, 147));
+        color: white;
+    }
+
+    .btn-primary:active {
+        transform: translateY(-1px);
+    }
+
+    .btn-primary i {
+        font-size: 1.2rem;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid #f0f0f0;
+    }
+
+    /* Help Text */
+    .form-text {
+        color: #999;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        font-style: italic;
+    }
+
+    /* Invalid Feedback */
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: block;
+    }
+
+    .is-invalid {
+        border-color: #dc3545;
+    }
+
+    .is-invalid:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.15);
+    }
+
+    /* Form Icon Container */
+    .form-icon-wrapper {
+        position: relative;
+    }
+
+    .form-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #764ba2;
+        pointer-events: none;
+    }
+
+    .form-control.with-icon {
+        padding-left: 3rem;
+    }
+
+    /* Progress Indicator (Optional) */
+    .form-progress {
+        background: linear-gradient(90deg, rgba(216, 63, 147, 0.1), rgba(173, 42, 134, 0.1));
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        text-align: center;
+        font-size: 0.9rem;
+        color: #764ba2;
+        font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .form-card-body {
+            padding: 1.5rem;
+        }
+
+        .form-card-header {
+            padding: 1.5rem;
+        }
+
+        .form-card-header h3 {
+            font-size: 1.5rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* Animation */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-card {
+        animation: slideIn 0.5s ease-out;
+    }
+
+</style>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card form-card">
+                <div class="form-card-header">
+                    <h3>
+                        {% if edit %}
+                        <i class="fas fa-edit"></i>
+                        Edit Patient Log
+                        {% else %}
+                        <i class="fas fa-plus-circle"></i>
+                        Create New Patient Log
+                        {% endif %}
+                    </h3>
+                    <p>
+                        {% if edit %}
+                        Update the patient's medical log information below
+                        {% else %}
+                        Record important patient information and observations
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="form-card-body">
+                    <main>
+                        <div class="container-fluid">
+                                {{ render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Add icons to form labels dynamically based on field names
+    const labelIcons = {
+        'date': 'fa-calendar-alt',
+        'time': 'fa-clock',
+        'blood_pressure': 'fa-heartbeat',
+        'temperature': 'fa-thermometer-half',
+        'weight': 'fa-weight',
+        'height': 'fa-ruler-vertical',
+        'notes': 'fa-notes-medical',
+        'symptoms': 'fa-stethoscope',
+        'diagnosis': 'fa-diagnoses',
+        'prescription': 'fa-prescription',
+        'patient': 'fa-user-injured',
+        'doctor': 'fa-user-md',
+        'log': 'fa-clipboard-list'
+    };
+
+    // Add icons to labels
+    document.querySelectorAll('label').forEach(label => {
+        const forAttr = label.getAttribute('for');
+        if (forAttr) {
+            for (const [key, iconClass] of Object.entries(labelIcons)) {
+                if (forAttr.toLowerCase().includes(key)) {
+                    const icon = document.createElement('i');
+                    icon.className = `fas ${iconClass}`;
+                    label.insertBefore(icon, label.firstChild);
+                    break;
+                }
+            }
+        }
+    });
+
+    // Mark required fields
+    document.querySelectorAll('input[required], textarea[required], select[required]').forEach(field => {
+        const label = document.querySelector(`label[for="${field.id}"]`);
+        if (label && !label.classList.contains('required')) {
+            label.classList.add('required');
+        }
+    });
+
+    // Add submit icon
+    const submitBtn = document.querySelector('button[type="submit"]:not(.signup-button), input[type="submit"]');
+    if (submitBtn && submitBtn.classList.contains('btn-primary')) {
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-save';
+        submitBtn.insertBefore(icon, submitBtn.firstChild);
+        submitBtn.innerHTML = icon.outerHTML + ' ' + submitBtn.textContent.trim();
+    }
+
+    // Smooth scroll to first error
+    const firstError = document.querySelector('.is-invalid');
+    if (firstError) {
+        setTimeout(() => {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+        }, 300);
+    }
+
+    // Add character counter for textareas
+    document.querySelectorAll('textarea').forEach(textarea => {
+        const maxLength = textarea.getAttribute('maxlength');
+        if (maxLength) {
+            const counter = document.createElement('small');
+            counter.className = 'form-text text-muted';
+            counter.style.textAlign = 'right';
+            counter.style.display = 'block';
+
+            const updateCounter = () => {
+                const remaining = maxLength - textarea.value.length;
+                counter.textContent = `${remaining} characters remaining`;
+                if (remaining < 50) {
+                    counter.style.color = '#dc3545';
+                } else {
+                    counter.style.color = '#999';
+                }
+            };
+
+            textarea.addEventListener('input', updateCounter);
+            textarea.parentNode.appendChild(counter);
+            updateCounter();
+        }
+    });
+});
+</script>
+{% endblock %}

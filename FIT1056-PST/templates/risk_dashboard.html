@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block style %}
+<style>
+    body {
+        background: rgba(243, 189, 198, 0.329);
+        min-height: 100vh;
+    }
+
+    .dashboard-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: rgb(233, 111, 131);
+        text-align: center;
+        margin-bottom: 3rem;
+        text-shadow: 5px 5px 5px rgb(255, 255, 255);
+    }
+
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-card.total {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .stat-card.high-risk {
+        border-color: #dc3545;
+    }
+
+    .stat-card.high-risk:hover {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+    }
+
+    .stat-card.medium-risk {
+        border-color: #ffc107;
+    }
+
+    .stat-card.medium-risk:hover {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        color: white;
+    }
+
+    .stat-card.low-risk {
+        border-color: #28a745;
+    }
+
+    .stat-card.low-risk:hover {
+        background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+        color: white;
+    }
+
+    .stat-card h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+        opacity: 0.9;
+    }
+
+    .stat-card h3 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .stat-card .icon {
+        font-size: 2rem;
+        opacity: 0.3;
+        float: right;
+    }
+
+    .accordion-item {
+        border: none;
+        border-radius: 15px !important;
+        overflow: hidden;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .accordion-item:nth-child(1) { animation-delay: 0.5s; }
+    .accordion-item:nth-child(2) { animation-delay: 0.6s; }
+    .accordion-item:nth-child(3) { animation-delay: 0.7s; }
+
+    .accordion-button {
+        background: white;
+        color: #2d3748;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 1.25rem 1.5rem;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: none;
+    }
+
+    .accordion-button:focus {
+        box-shadow: none;
+        border: none;
+    }
+
+    .accordion-button::after {
+        filter: brightness(0) invert(1);
+    }
+
+    .accordion-button:not(.collapsed)::after {
+        filter: brightness(0) invert(1);
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        background: #f8f9fa;
+        color: #2d3748;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border: none;
+        padding: 1rem;
+    }
+
+    .table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background: #f8f9fa;
+        transform: scale(1.01);
+    }
+
+    .btn-outline-primary {
+        border-color: #667eea;
+        color: #667eea;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-primary:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: transparent;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .risk-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .badge-high { background: #dc3545; color: white; }
+    .badge-medium { background: #ffc107; color: #000; }
+    .badge-low { background: #28a745; color: white; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="dashboard-container">
+        <h2 class="page-title">Risk Assessment Dashboard</h2>
+
+        <!-- Summary Cards -->
+        <div class="row text-center mb-5">
+            <div class="col-md-3 mb-3">
+                <div class="stat-card total">
+                    <div class="icon">👥</div>
+                    <h5>Total Patients</h5>
+                    <h3>{{ total_patients }}</h3>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card high-risk">
+                    <div class="icon">⚠️</div>
+                    <h5>High Risk</h5>
+                    <h3 class="text-danger">{{ high_risk }}</h3>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card medium-risk">
+                    <div class="icon">⚡</div>
+                    <h5>Medium Risk</h5>
+                    <h3 class="text-warning">{{ medium_risk }}</h3>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card low-risk">
+                    <div class="icon">✓</div>
+                    <h5>Low Risk</h5>
+                    <h3 class="text-success">{{ low_risk }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patients Table by Risk Category -->
+        <div class="accordion" id="riskAccordion">
+            {% for level, profiles in risk_patients.items() %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{ level }}">
+                    <button class="accordion-button {% if level != 'High' %}collapsed{% endif %}" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapse{{ level }}" 
+                        aria-expanded="{% if level == 'High' %}true{% else %}false{% endif %}"
+                        aria-controls="collapse{{ level }}">
+                        <span class="risk-badge badge-{{ level|lower }}">{{ level }}</span>
+                        &nbsp;&nbsp;{{ level }} Risk Patients ({{ profiles|length }})
+                    </button>
+                </h2>
+                <div id="collapse{{ level }}" class="accordion-collapse collapse {% if level == 'High' %}show{% endif %}"
+                    aria-labelledby="heading{{ level }}" data-bs-parent="#riskAccordion">
+                    <div class="accordion-body p-0">
+                        {% if profiles %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Date of Birth</th>
+                                        <th>Gender</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for profile in profiles %}
+                                    <tr>
+                                        <td><strong>{{ profile.patient.username or 'Unnamed' }}</strong></td>
+                                        <td>{{ profile.patient.dob or 'N/A' }}</td>
+                                        <td>{{ profile.patient.gender or 'N/A' }}</td>
+                                        <td class="text-center">
+                                            <a href="{{ url_for('patient_details', patient_id=profile.patient.id) }}"
+                                                class="btn btn-sm btn-outline-primary">
+                                                View Profile →
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted text-center py-4 mb-0">No patients in this category.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment - Moonway Medical{% endblock %}
+
+{% block style %}
+<style>
+    body {
+        background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+        min-height: 100vh;
+    }
+
+    .appointment-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .appointment-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        color: #ad2a86;
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-subtitle {
+        color: #666;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+    .form-label {
+        color: #ad2a86;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #f8bbd0;
+        border-radius: 10px;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #d83f93;
+        box-shadow: 0 0 0 0.2rem rgba(216, 63, 147, 0.25);
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #d83f93 0%, #ad2a86 100%);
+        border: none;
+        color: white;
+        padding: 1rem 3rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 1.5rem;
+        box-shadow: 0 4px 15px rgba(216, 63, 147, 0.4);
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(216, 63, 147, 0.6);
+    }
+
+    .submit-btn:active {
+        transform: translateY(-1px);
+    }
+
+    .info-section {
+        background: linear-gradient(135deg, #f8bbd0 0%, #f48fb1 100%);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-section h5 {
+        color: #ad2a86;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .info-section ul {
+        color: #5d1049;
+        margin-bottom: 0;
+    }
+
+    .info-section li {
+        margin-bottom: 0.5rem;
+    }
+
+    .appointment-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .appointment-type-card {
+        background: linear-gradient(135deg, #f8bbd0 0%, #f48fb1 100%);
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 3px solid transparent;
+    }
+
+    .appointment-type-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(216, 63, 147, 0.3);
+        border-color: #d83f93;
+    }
+
+    .appointment-type-card i {
+        font-size: 2.5rem;
+        color: #ad2a86;
+        margin-bottom: 0.5rem;
+    }
+
+    .appointment-type-card h6 {
+        color: #5d1049;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .alert {
+        border-radius: 15px;
+        border: none;
+        padding: 1rem 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="appointment-container">
+    <div class="appointment-card">
+        <h1 class="page-title">Book Your Appointment</h1>
+        <p class="page-subtitle">Schedule a consultation with our healthcare professionals</p>
+
+        <div class="info-section">
+            <h5>📋 Appointment Information</h5>
+            <ul>
+                <li>Appointments are available Monday to Saturday, 9:00 AM - 6:00 PM</li>
+                <li>Appoints must be booked 3 days in advance</li>
+                <li>Please arrive 10 minutes before your scheduled time</li>
+                <li>Bring your ID and insurance information</li>
+                <li>You will receive a confirmation email shortly</li>
+            </ul>
+        </div>
+
+        <form method="POST" action="{{ url_for('create_appointment') }}">
+            {{ form.hidden_tag() }}
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <label for="date" class="form-label">Preferred Date *</label>
+                    {{ form.date(class="form-control", type="date") }}
+                    {% if form.date.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.date.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="time" class="form-label">Preferred Time *</label>
+                    {{ form.time(class="form-select") }}
+                    {% if form.time.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.time.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="reason" class="form-label">Reason for Visit *</label>
+                {{ form.reason(class="form-control", rows="4", placeholder="Please describe your symptoms or reason for consultation...") }}
+                {% if form.reason.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.reason.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            {{ form.submit(class="submit-btn") }}
+        </form>
+    </div>
+
+    <div class="appointment-card">
+        <h5 style="color: #ad2a86; font-weight: 700; text-align: center; margin-bottom: 1.5rem;">Our Services</h5>
+        <div class="appointment-types">
+            <div class="appointment-type-card">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🩺</div>
+                <h6>General Checkup</h6>
+            </div>
+            <div class="appointment-type-card">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💉</div>
+                <h6>Vaccination</h6>
+            </div>
+            <div class="appointment-type-card">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🧪</div>
+                <h6>Lab Tests</h6>
+            </div>
+            <div class="appointment-type-card">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👨‍⚕️</div>
+                <h6>Consultation</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set minimum date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.querySelector('input[type="date"]');
+        if (dateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+        }
+    });
+</script>
+{% endblock %}

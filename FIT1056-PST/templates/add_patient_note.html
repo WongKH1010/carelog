@@ -1,0 +1,563 @@
+{% extends "base.html" %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+{% block style %}
+<style>
+    body {
+        background: rgba(243, 189, 198, 0.329);
+        min-height: 100vh;
+    }
+
+    /* Note Card Styling */
+    .note-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        border: none;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .note-header {
+        background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134));
+        color: white;
+        padding: 2rem;
+        border: none;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .note-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+        animation: pulse 6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .note-header h3 {
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        font-size: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .note-header h3 i {
+        font-size: 2.5rem;
+        animation: writing 3s ease-in-out infinite;
+    }
+
+    @keyframes writing {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-5deg); }
+        75% { transform: rotate(5deg); }
+    }
+
+    .note-header p {
+        margin: 0.75rem 0 0 0;
+        opacity: 0.95;
+        font-size: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .note-body {
+        padding: 2.5rem;
+    }
+
+    /* Benefits Section */
+    .benefits-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, rgba(216, 63, 147, 0.08), rgba(173, 42, 134, 0.08));
+        border-radius: 15px;
+    }
+
+    .benefit-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .benefit-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(216, 63, 147, 0.2);
+    }
+
+    .benefit-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .benefit-text {
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: 500;
+    }
+
+    /* Form Styling */
+    .form-group {
+        margin-bottom: 1.75rem;
+    }
+
+    .form-label, label {
+        color: #764ba2;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-label i, label i {
+        color: rgb(216, 63, 147);
+        font-size: 1.1rem;
+    }
+
+    .form-control, .form-select, textarea.form-control, select.form-control, input[type="date"], input[type="time"] {
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 0.85rem 1.15rem;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        background: white;
+    }
+
+    .form-control:focus, .form-select:focus, textarea.form-control:focus, select.form-control:focus, input[type="date"]:focus, input[type="time"]:focus {
+        border-color: rgb(216, 63, 147);
+        box-shadow: 0 0 0 0.25rem rgba(216, 63, 147, 0.15);
+        transform: translateY(-2px);
+        background: white;
+    }
+
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+        font-family: inherit;
+        line-height: 1.6;
+    }
+
+    .form-control::placeholder {
+        color: #b0b0b0;
+        font-style: italic;
+    }
+
+    /* Required Field Indicator */
+    .form-label.required::after, label.required::after {
+        content: "*";
+        color: rgb(216, 63, 147);
+        margin-left: 0.25rem;
+        font-weight: 700;
+    }
+
+    /* Submit Button Styling */
+    .btn-primary {
+        background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134));
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 3rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(216, 63, 147, 0.3);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 25px rgba(216, 63, 147, 0.5);
+        background: linear-gradient(135deg, rgb(173, 42, 134), rgb(216, 63, 147));
+        color: white;
+    }
+
+    .btn-primary:active {
+        transform: translateY(-1px);
+    }
+
+    .btn-primary i {
+        font-size: 1.3rem;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 2px solid #f0f0f0;
+    }
+
+    /* Help Text */
+    .form-text {
+        color: #999;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .form-text i {
+        font-size: 0.9rem;
+    }
+
+    /* Invalid Feedback */
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: block;
+    }
+
+    .is-invalid {
+        border-color: #dc3545;
+    }
+
+    .is-invalid:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.15);
+    }
+
+    /* Info Box */
+    .info-box {
+        background: linear-gradient(135deg, rgba(216, 63, 147, 0.08), rgba(173, 42, 134, 0.08));
+        border-left: 4px solid rgb(216, 63, 147);
+        padding: 1.25rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .info-box i {
+        color: rgb(216, 63, 147);
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .info-box-content {
+        flex: 1;
+    }
+
+    .info-box-content h6 {
+        color: #764ba2;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-box-content p {
+        color: #666;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    /* Privacy Notice */
+    .privacy-notice {
+        background: white;
+        border: 2px solid rgba(216, 63, 147, 0.2);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-top: 1.5rem;
+        display: flex;
+        align-items: start;
+        gap: 1rem;
+    }
+
+    .privacy-notice i {
+        color: rgb(216, 63, 147);
+        font-size: 1.3rem;
+        margin-top: 0.2rem;
+    }
+
+    .privacy-notice-content {
+        flex: 1;
+    }
+
+    .privacy-notice-content h6 {
+        color: rgb(216, 63, 147);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .privacy-notice-content p {
+        margin: 0;
+        color: #666;
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    /* Character Counter */
+    .char-counter {
+        text-align: right;
+        font-size: 0.85rem;
+        color: #999;
+        margin-top: 0.5rem;
+        font-weight: 500;
+    }
+
+    .char-counter.warning {
+        color: #dc3545;
+        font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .note-body {
+            padding: 1.5rem;
+        }
+
+        .note-header {
+            padding: 1.5rem;
+        }
+
+        .note-header h3 {
+            font-size: 1.5rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .benefits-section {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Animation */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .note-card {
+        animation: slideIn 0.5s ease-out;
+    }
+</style>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card note-card">
+                <div class="note-header">
+                    <h3>
+                        <i class="fas fa-pen-fancy"></i>
+                        Patient Notes & Updates
+                    </h3>
+                    <p>Share your health updates, concerns, or questions with your healthcare provider</p>
+                </div>
+                <div class="note-body">
+                    <!-- Benefits Section -->
+                    <div class="benefits-section">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="benefit-text">Direct to your doctor</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="benefit-text">Secure & confidential</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="benefit-text">24/7 submission</div>
+                        </div>
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="info-box-content">
+                            <h6>How to Write Your Note</h6>
+                            <p>Be clear and specific about your symptoms, concerns, or questions. Include relevant dates, medications, or changes in your condition. Your healthcare provider will review this information.</p>
+                        </div>
+                    </div>
+
+                    <main>
+                        <div class="container-fluid">
+                            {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+                        </div>
+                    </main>
+
+                    <!-- Privacy Notice -->
+                    <div class="privacy-notice">
+                        <i class="fas fa-lock"></i>
+                        <div class="privacy-notice-content">
+                            <h6>Your Privacy Matters</h6>
+                            <p>All information you submit is encrypted and stored securely. Only authorized healthcare providers can access your notes. This is not for emergencies - if you need immediate medical attention, please call emergency services.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Field icon mapping for patient notes
+    const labelIcons = {
+        'subject': 'fa-tag',
+        'title': 'fa-heading',
+        'topic': 'fa-tag',
+        'note': 'fa-sticky-note',
+        'message': 'fa-comment-medical',
+        'concern': 'fa-exclamation-circle',
+        'symptom': 'fa-heartbeat',
+        'question': 'fa-question-circle',
+        'date': 'fa-calendar-alt',
+        'time': 'fa-clock',
+        'category': 'fa-folder-open',
+        'type': 'fa-clipboard-list',
+        'description': 'fa-align-left',
+        'detail': 'fa-list-ul'
+    };
+
+    // Add icons to labels
+    document.querySelectorAll('label').forEach(label => {
+        const forAttr = label.getAttribute('for');
+        const labelText = label.textContent.toLowerCase();
+
+        if (forAttr && !label.querySelector('i')) {
+            for (const [key, iconClass] of Object.entries(labelIcons)) {
+                if (forAttr.toLowerCase().includes(key) || labelText.includes(key)) {
+                    const icon = document.createElement('i');
+                    icon.className = `fas ${iconClass}`;
+                    label.insertBefore(icon, label.firstChild);
+                    break;
+                }
+            }
+        }
+    });
+
+    // Mark required fields
+    document.querySelectorAll('input[required], textarea[required], select[required]').forEach(field => {
+        const label = document.querySelector(`label[for="${field.id}"]`);
+        if (label && !label.classList.contains('required')) {
+            label.classList.add('required');
+        }
+    });
+
+    // Add submit icon
+    const submitBtn = document.querySelector('button[type="submit"], input[type="submit"]');
+    if (submitBtn && submitBtn.classList.contains('btn-primary')) {
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-paper-plane';
+
+        const btnText = submitBtn.textContent.trim();
+        submitBtn.innerHTML = '';
+        submitBtn.appendChild(icon);
+        submitBtn.appendChild(document.createTextNode(' ' + (btnText || 'Submit Note')));
+    }
+
+    // Smooth scroll to first error
+    const firstError = document.querySelector('.is-invalid');
+    if (firstError) {
+        setTimeout(() => {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+        }, 300);
+    }
+
+    // Add character counter for textareas
+    document.querySelectorAll('textarea').forEach(textarea => {
+        const maxLength = textarea.getAttribute('maxlength') || 1000;
+        textarea.setAttribute('maxlength', maxLength);
+
+        const counter = document.createElement('div');
+        counter.className = 'char-counter';
+
+        const updateCounter = () => {
+            const remaining = maxLength - textarea.value.length;
+            const current = textarea.value.length;
+            counter.textContent = `${current} / ${maxLength} characters`;
+
+            if (remaining < 100) {
+                counter.classList.add('warning');
+            } else {
+                counter.classList.remove('warning');
+            }
+        };
+
+        textarea.addEventListener('input', updateCounter);
+        textarea.parentNode.appendChild(counter);
+        updateCounter();
+    });
+
+    // Add helpful placeholder text if textarea doesn't have one
+    document.querySelectorAll('textarea').forEach(textarea => {
+        if (!textarea.placeholder) {
+            textarea.placeholder = "Describe your symptoms, concerns, or questions in detail. Include when they started, how they've changed, and any other relevant information...";
+        }
+    });
+
+    // Add help text for note fields
+    const noteFields = document.querySelectorAll('textarea');
+    noteFields.forEach(field => {
+        if (!field.parentNode.querySelector('.form-text.custom-help')) {
+            const helpText = document.createElement('small');
+            helpText.className = 'form-text custom-help';
+            helpText.innerHTML = '<i class="fas fa-lightbulb"></i> Be as detailed as possible to help your healthcare provider understand your situation';
+            field.parentNode.insertBefore(helpText, field.nextSibling);
+        }
+    });
+});
+</script>
+{% endblock %}

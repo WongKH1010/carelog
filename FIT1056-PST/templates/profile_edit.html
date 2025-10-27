@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+{% block style %}
+<style>
+    body {
+        background: rgba(243, 189, 198, 0.329);
+        min-height: 100vh;
+    }
+
+    /* Form Card Styling */
+    .profile-form-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        border: none;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .profile-form-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 2rem;
+        border: none;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-form-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .profile-form-header h3 {
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        font-size: 1.85rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-form-header h3 i {
+        font-size: 2.2rem;
+    }
+
+    .profile-form-header p {
+        margin: 0.75rem 0 0 0;
+        opacity: 0.95;
+        font-size: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-form-body {
+        padding: 2.5rem;
+    }
+
+    /* Section Headers */
+    .form-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .form-section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid;
+        border-image: linear-gradient(90deg, #667eea, #764ba2, transparent) 1;
+    }
+
+    .form-section-header i {
+        font-size: 1.5rem;
+        color: #667eea;
+    }
+
+    .form-section-header h5 {
+        margin: 0;
+        color: #764ba2;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    /* Form Styling */
+    .form-group {
+        margin-bottom: 1.75rem;
+    }
+
+    .form-label, label {
+        color: #764ba2;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-label i, label i {
+        color: #667eea;
+        font-size: 1.1rem;
+    }
+
+    .form-control, .form-select, textarea.form-control, select.form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 0.85rem 1.15rem;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        background: white;
+    }
+
+    .form-control:focus, .form-select:focus, textarea.form-control:focus, select.form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+        transform: translateY(-2px);
+        background: white;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-control::placeholder {
+        color: #b0b0b0;
+        font-style: italic;
+    }
+
+    /* Required Field Indicator */
+    .form-label.required::after, label.required::after {
+        content: "*";
+        color: #667eea;
+        margin-left: 0.25rem;
+        font-weight: 700;
+    }
+
+    /* Submit Button Styling */
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 3rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        background: linear-gradient(135deg, #764ba2, #667eea);
+        color: white;
+    }
+
+    .btn-primary:active {
+        transform: translateY(-1px);
+    }
+
+    .btn-primary i {
+        font-size: 1.3rem;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 2px solid #f0f0f0;
+    }
+
+    /* Help Text */
+    .form-text {
+        color: #999;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .form-text i {
+        font-size: 0.9rem;
+    }
+
+    /* Invalid Feedback */
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: block;
+    }
+
+    .is-invalid {
+        border-color: #dc3545;
+    }
+
+    .is-invalid:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.15);
+    }
+
+    /* Info Box */
+    .info-box {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+        border-left: 4px solid #667eea;
+        padding: 1.25rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .info-box i {
+        color: #667eea;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .info-box-content {
+        flex: 1;
+    }
+
+    .info-box-content h6 {
+        color: #764ba2;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-box-content p {
+        color: #666;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .profile-form-body {
+            padding: 1.5rem;
+        }
+
+        .profile-form-header {
+            padding: 1.5rem;
+        }
+
+        .profile-form-header h3 {
+            font-size: 1.5rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .form-section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+    }
+
+    /* Animation */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .profile-form-card {
+        animation: slideIn 0.5s ease-out;
+    }
+
+    /* Character Counter */
+    .char-counter {
+        text-align: right;
+        font-size: 0.8rem;
+        color: #999;
+        margin-top: 0.35rem;
+    }
+
+    .char-counter.warning {
+        color: #dc3545;
+        font-weight: 600;
+    }
+</style>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card profile-form-card">
+                <div class="profile-form-header">
+                    <h3>
+                        {% if editing %}
+                        <i class="fas fa-user-edit"></i>
+                        Edit Patient Profile
+                        {% else %}
+                        <i class="fas fa-user-plus"></i>
+                        Create Patient Profile
+                        {% endif %}
+                    </h3>
+                    <p>
+                        {% if editing %}
+                        Update the patient's medical and personal information
+                        {% else %}
+                        Complete the patient's medical and personal information
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="profile-form-body">
+                    <!-- Info Box -->
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="info-box-content">
+                            <h6>Important Information</h6>
+                            <p>Please ensure all information is accurate and up-to-date. Fields marked with an asterisk (*) are required.</p>
+                        </div>
+                    </div>
+
+                    <main>
+                        <div class="container-fluid">
+                            {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Field icon mapping
+    const labelIcons = {
+        'cultural': 'fa-globe-asia',
+        'culture': 'fa-globe-asia',
+        'dietary': 'fa-utensils',
+        'diet': 'fa-utensils',
+        'allergen': 'fa-allergies',
+        'allergy': 'fa-allergies',
+        'medical': 'fa-file-medical',
+        'history': 'fa-history',
+        'condition': 'fa-heartbeat',
+        'medication': 'fa-pills',
+        'blood': 'fa-tint',
+        'emergency': 'fa-phone-square-alt',
+        'contact': 'fa-address-book',
+        'insurance': 'fa-id-card-alt',
+        'note': 'fa-sticky-note',
+        'comment': 'fa-comment-medical'
+    };
+
+    // Add icons to labels
+    document.querySelectorAll('label').forEach(label => {
+        const forAttr = label.getAttribute('for');
+        const labelText = label.textContent.toLowerCase();
+
+        if (forAttr && !label.querySelector('i')) {
+            for (const [key, iconClass] of Object.entries(labelIcons)) {
+                if (forAttr.toLowerCase().includes(key) || labelText.includes(key)) {
+                    const icon = document.createElement('i');
+                    icon.className = `fas ${iconClass}`;
+                    label.insertBefore(icon, label.firstChild);
+                    break;
+                }
+            }
+        }
+    });
+
+    // Mark required fields
+    document.querySelectorAll('input[required], textarea[required], select[required]').forEach(field => {
+        const label = document.querySelector(`label[for="${field.id}"]`);
+        if (label && !label.classList.contains('required')) {
+            label.classList.add('required');
+        }
+    });
+
+    // Add submit icon
+    const submitBtn = document.querySelector('button[type="submit"], input[type="submit"]');
+    if (submitBtn && submitBtn.classList.contains('btn-primary')) {
+        const isEditing = {{ 'true' if editing else 'false' }};
+        const icon = document.createElement('i');
+        icon.className = isEditing ? 'fas fa-save' : 'fas fa-check-circle';
+
+        // Clear existing content and rebuild
+        const btnText = submitBtn.textContent.trim();
+        submitBtn.innerHTML = '';
+        submitBtn.appendChild(icon);
+        submitBtn.appendChild(document.createTextNode(' ' + btnText));
+    }
+
+    // Smooth scroll to first error
+    const firstError = document.querySelector('.is-invalid');
+    if (firstError) {
+        setTimeout(() => {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+        }, 300);
+    }
+
+    // Add character counter for textareas
+    document.querySelectorAll('textarea').forEach(textarea => {
+        const maxLength = textarea.getAttribute('maxlength');
+        if (maxLength) {
+            const counter = document.createElement('div');
+            counter.className = 'char-counter';
+
+            const updateCounter = () => {
+                const remaining = maxLength - textarea.value.length;
+                const current = textarea.value.length;
+                counter.textContent = `${current} / ${maxLength} characters`;
+
+                if (remaining < 50) {
+                    counter.classList.add('warning');
+                } else {
+                    counter.classList.remove('warning');
+                }
+            };
+
+            textarea.addEventListener('input', updateCounter);
+            textarea.parentNode.appendChild(counter);
+            updateCounter();
+        }
+    });
+
+    // Add help text to specific fields
+    const helpTexts = {
+        'cultural': 'Specify any cultural preferences or considerations for care',
+        'dietary': 'List dietary restrictions, preferences, or special requirements',
+        'allergen': 'Include all known allergies (medications, food, environmental)',
+        'medical': 'Provide relevant medical history, conditions, and past treatments'
+    };
+
+    Object.entries(helpTexts).forEach(([key, text]) => {
+        const field = document.querySelector(`[id*="${key}"]`);
+        if (field && !field.parentNode.querySelector('.form-text')) {
+            const helpText = document.createElement('small');
+            helpText.className = 'form-text';
+            helpText.innerHTML = `<i class="fas fa-info-circle"></i> ${text}`;
+            field.parentNode.appendChild(helpText);
+        }
+    });
+
+    // Group fields into sections if they exist
+    const sections = {
+        'Cultural & Dietary Information': ['cultural', 'dietary'],
+        'Medical Information': ['allergen', 'medical', 'history', 'condition'],
+        'Emergency & Contact': ['emergency', 'contact', 'insurance']
+    };
+
+    // This would require restructuring the form, so we'll skip automatic sectioning
+    // but the CSS is ready for manual section headers if needed
+});
+</script>
+{% endblock %}

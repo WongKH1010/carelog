@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+{% block style %}
+<style>
+    body {
+        background: rgba(243, 189, 198, 0.329);
+        min-height: 100vh;
+    }
+
+    .role-change-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 0;
+    }
+
+    .role-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        padding: 3rem 2.5rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 500px;
+        animation: fadeInScale 0.5s ease-out;
+        border: none;
+    }
+
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    .role-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        text-align: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .role-subtitle {
+        text-align: center;
+        color: #718096;
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+    }
+
+    .role-icon {
+        text-align: center;
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+
+    .role-change-container .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.875rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .role-change-container .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .role-change-container .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .btn-secondary {
+        background: #e2e8f0;
+        color: #2d3748;
+        border: none;
+        border-radius: 10px;
+        padding: 0.875rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        margin-top: 0.5rem;
+    }
+
+    .btn-secondary:hover {
+        background: #cbd5e0;
+        color: #2d3748;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .role-badge {
+        display: inline-block;
+        padding: 0.25rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 0.5rem 0.25rem;
+    }
+
+    .info-box {
+        background: #f7fafc;
+        border-left: 4px solid #667eea;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        color: #4a5568;
+    }
+
+    .info-box strong {
+        color: #2d3748;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="role-change-container">
+    <div class="role-card">
+        <div class="role-icon">👤⚙️</div>
+        <h3 class="role-title">Change User Role</h3>
+        <p class="role-subtitle">Update user permissions and access level</p>
+        
+        <div class="info-box">
+            <strong>Available Roles:</strong><br>
+            <span class="role-badge" style="background: #e3f2fd; color: #1976d2;">Patient</span>
+            <span class="role-badge" style="background: #f3e5f5; color: #7b1fa2;">Receptionist</span>
+            <span class="role-badge" style="background: #e8f5e9; color: #388e3c;">Nurse</span>
+            <span class="role-badge" style="background: #fff3e0; color: #f57c00;">Doctor</span>
+            <span class="role-badge" style="background: #fce4ec; color: #c2185b;">Admin</span>
+        </div>
+        
+        {{ render_form(form, novalidate=True) }}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}Feedback - Patient Care System{% endblock %}
+
+{% block style %}
+<style>
+    body {
+        background: rgba(243, 189, 198, 0.329);
+        min-height: 100vh;
+    }
+
+    .feedback-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .feedback-header {
+        background: white;
+        border-radius: 15px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        text-align: center;
+    }
+
+    .feedback-header h1 {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .feedback-header p {
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+
+    .feedback-form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        margin-bottom: 2rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .rating-container {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .star-rating {
+        font-size: 2rem;
+        cursor: pointer;
+        color: #ddd;
+        transition: all 0.2s ease;
+    }
+
+    .star-rating:hover,
+    .star-rating.active {
+        color: #ffc107;
+        transform: scale(1.1);
+    }
+
+    .feedback-type-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .feedback-type-card {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+    .feedback-type-card:hover {
+        border-color: #667eea;
+        background: #f0f4ff;
+        transform: translateY(-3px);
+    }
+
+    .feedback-type-card.selected {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .feedback-type-card i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        padding: 1rem 3rem;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    }
+
+    .contact-methods {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .contact-method {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .contact-method:hover {
+        background: #f0f4ff;
+        transform: translateX(5px);
+    }
+
+    .contact-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        margin-right: 1rem;
+    }
+
+    .contact-info h5 {
+        margin-bottom: 0.2rem;
+        color: #333;
+    }
+
+    .contact-info p {
+        margin-bottom: 0;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="feedback-container">
+    <div class="feedback-header">
+        <h1><i class="fas fa-comments"></i> Share Your Feedback</h1>
+        <p>Your feedback helps us improve our services and patient care experience</p>
+    </div>
+
+    <div class="feedback-form-card">
+        <form action="{{ url_for('contact') }}" method="POST">
+            <!-- Feedback Type Selection -->
+            <div class="mb-4">
+                <label class="form-label">What type of feedback would you like to share?</label>
+                <div class="feedback-type-cards">
+                    <div class="feedback-type-card" onclick="selectFeedbackType(this, 'compliment')">
+                        <input type="radio" name="feedback_type" value="compliment" style="display: none;">
+                        <i class="fas fa-smile"></i>
+                        <div>Compliment</div>
+                    </div>
+                    <div class="feedback-type-card" onclick="selectFeedbackType(this, 'suggestion')">
+                        <input type="radio" name="feedback_type" value="suggestion" style="display: none;">
+                        <i class="fas fa-lightbulb"></i>
+                        <div>Suggestion</div>
+                    </div>
+                    <div class="feedback-type-card" onclick="selectFeedbackType(this, 'concern')">
+                        <input type="radio" name="feedback_type" value="concern" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div>Concern</div>
+                    </div>
+                    <div class="feedback-type-card" onclick="selectFeedbackType(this, 'complaint')">
+                        <input type="radio" name="feedback_type" value="complaint" style="display: none;">
+                        <i class="fas fa-frown"></i>
+                        <div>Complaint</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rating -->
+            <div class="mb-4">
+                <label class="form-label">Overall Experience Rating</label>
+                <div class="rating-container">
+                    <span class="star-rating" onclick="setRating(1)">★</span>
+                    <span class="star-rating" onclick="setRating(2)">★</span>
+                    <span class="star-rating" onclick="setRating(3)">★</span>
+                    <span class="star-rating" onclick="setRating(4)">★</span>
+                    <span class="star-rating" onclick="setRating(5)">★</span>
+                    <input type="hidden" name="rating" id="rating-input" value="">
+                </div>
+            </div>
+
+            <!-- Name -->
+            <div class="mb-4">
+                <label for="name" class="form-label">Your Name</label>
+                <input type="text" class="form-control" id="name" name="name"
+                       {% if current_user.is_authenticated %}value="{{ current_user.username }}"{% endif %}
+                       required>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-4">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email"
+                       {% if current_user.is_authenticated %}value="{{ current_user.email }}"{% endif %}
+                       required>
+            </div>
+
+            <!-- Category -->
+            <div class="mb-4">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category" required>
+                    <option value="">Select a category</option>
+                    <option value="medical_care">Medical Care</option>
+                    <option value="nursing_staff">Nursing Staff</option>
+                    <option value="reception">Reception Services</option>
+                    <option value="facilities">Facilities</option>
+                    <option value="appointments">Appointments</option>
+                    <option value="communication">Communication</option>
+                    <option value="billing">Billing & Admin</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <!-- Message -->
+            <div class="mb-4">
+                <label for="message" class="form-label">Your Feedback</label>
+                <textarea class="form-control" id="message" name="message" rows="6"
+                          placeholder="Please share your detailed feedback here..." required></textarea>
+            </div>
+
+            <!-- Anonymous Option -->
+            <div class="mb-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="anonymous" name="anonymous">
+                    <label class="form-check-label" for="anonymous">
+                        Submit anonymously (your identity will not be shared with staff)
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i> Submit Feedback
+            </button>
+        </form>
+    </div>
+
+    <!-- Alternative Contact Methods -->
+    <div class="contact-methods">
+        <h3 class="mb-4"><i class="fas fa-address-book"></i> Other Ways to Reach Us</h3>
+
+        <div class="contact-method">
+            <div class="contact-icon">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="contact-info">
+                <h5>Email</h5>
+                <p>feedback@hospital.com</p>
+            </div>
+        </div>
+
+        <div class="contact-method">
+            <div class="contact-icon">
+                <i class="fas fa-phone"></i>
+            </div>
+            <div class="contact-info">
+                <h5>Phone</h5>
+                <p>+60 3-1234 5678 (Mon-Fri, 9am-5pm)</p>
+            </div>
+        </div>
+
+        <div class="contact-method">
+            <div class="contact-icon">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="contact-info">
+                <h5>In Person</h5>
+                <p>Visit our Patient Relations desk at the main reception</p>
+            </div>
+        </div>
+
+        <div class="contact-method">
+            <div class="contact-icon">
+                <i class="fas fa-mail-bulk"></i>
+            </div>
+            <div class="contact-info">
+                <h5>Mail</h5>
+                <p>Patient Relations Department, Hospital Address, City</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectFeedbackType(card, type) {
+        // Remove selected class from all cards
+        document.querySelectorAll('.feedback-type-card').forEach(c => {
+            c.classList.remove('selected');
+        });
+
+        // Add selected class to clicked card
+        card.classList.add('selected');
+
+        // Check the radio button
+        card.querySelector('input[type="radio"]').checked = true;
+    }
+
+    function setRating(rating) {
+        // Set hidden input value
+        document.getElementById('rating-input').value = rating;
+
+        // Update star display
+        const stars = document.querySelectorAll('.star-rating');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+    }
+</script>
+{% endblock %}

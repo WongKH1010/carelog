@@ -1,0 +1,486 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Moonway Medical{% endblock %}
+
+{% block style %}
+<style>
+    body {
+        background: rgba(243, 189, 198, 0.329);
+        min-height: 100vh;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        padding: 4rem 0;
+        text-align: center;
+        color: white;
+    }
+
+    .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 700;
+        margin-bottom: 1.3rem;
+        color: rgb(160, 174, 255);
+        text-shadow: 5px 5px 5px rgb(255, 255, 255);
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+        color: rgba(160, 174, 255, 0.719);
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+
+    .hero-btn {
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .hero-btn-primary {
+        background: white;
+        color: #667eea;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .hero-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        color: #764ba2;
+    }
+
+    .hero-btn-secondary {
+        background: rgba(241, 89, 160, 0.233);
+        color: rgb(255, 255, 255);
+        border: 4px solid white;
+        backdrop-filter: blur(200px);
+    }
+
+    .hero-btn-secondary:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-3px);
+        color: white;
+    }
+
+    /* Features Section */
+    .features-section {
+        padding: 3rem 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+        animation: fadeIn 0.6s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    .feature-card:nth-child(4) { animation-delay: 0.4s; }
+    .feature-card:nth-child(5) { animation-delay: 0.5s; }
+    .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    }
+
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        color: white;
+    }
+
+    .icon-gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .icon-gradient-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .icon-gradient-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .icon-gradient-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    .icon-gradient-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .icon-gradient-6 { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+
+    .feature-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .feature-description {
+        color: #6c757d;
+        line-height: 1.6;
+    }
+
+    /* Stats Section */
+    .stats-section {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        margin: 3rem 2rem;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1.5rem;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+        transform: scale(1.05);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-item:hover .stat-number {
+        -webkit-text-fill-color: white;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: #6c757d;
+        margin-top: 0.5rem;
+    }
+
+    .stat-item:hover .stat-label {
+        color: white;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        margin: 3rem 2rem;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .cta-description {
+        font-size: 1.2rem;
+        color: #6c757d;
+        margin-bottom: 2rem;
+    }
+
+    /* Testimonials Section */
+    .testimonials-section {
+        padding: 3rem 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .section-title {
+        text-align: center;
+        color: rgb(255, 185, 220);
+        font-size: 2.5rem;
+        /* -webkit-text-stroke: 0.5px rgb(255, 255, 255);  */
+        font-weight: 700;
+        margin-bottom: 3rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.288);
+    }
+
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .testimonial-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+    }
+
+    .testimonial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    }
+
+    .testimonial-text {
+        color: #495057;
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+    }
+
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.3rem;
+        font-weight: 600;
+    }
+
+    .author-info h5 {
+        margin: 0;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .author-info p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title"><b>Welcome to Moonway Medical</b></h1>
+        <p class="hero-subtitle" style="margin-left: auto; margin-right: auto; max-width: 600px;"><b>Providing compassionate, comprehensive healthcare with cutting-edge technology and personalized patient care</b></p>
+        <div class="hero-buttons">
+            {% if current_user.role_level == 0 %}
+            <a href="{{ url_for('appointment') }}" class="hero-btn hero-btn-primary">
+                <i class="fas fa-calendar-check"></i> Book Appointment
+            </a>
+            {% endif %}
+            <a href="{{ url_for('profile') }}" class="hero-btn hero-btn-secondary">
+                <i class="fas fa-user"></i> My Profile
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon icon-gradient-1">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <h3 class="feature-title">Expert Medical Care</h3>
+            <p class="feature-description">Access to experienced healthcare professionals dedicated to your wellbeing</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon icon-gradient-2">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3 class="feature-title">Easy Scheduling</h3>
+            <p class="feature-description">Book and manage appointments online with our convenient scheduling system</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon icon-gradient-3">
+                <i class="fas fa-file-medical-alt"></i>
+            </div>
+            <h3 class="feature-title">Digital Records</h3>
+            <p class="feature-description">Secure access to your medical history and health information anytime</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon icon-gradient-4">
+                <i class="fas fa-heart"></i>
+            </div>
+            <h3 class="feature-title">Holistic Approach</h3>
+            <p class="feature-description">Comprehensive care addressing physical, emotional, and social wellbeing</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon icon-gradient-5">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3 class="feature-title">Privacy First</h3>
+            <p class="feature-description">Your data is protected with enterprise-grade security and encryption</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon icon-gradient-6">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3 class="feature-title">24/7 Support</h3>
+            <p class="feature-description">Round-the-clock assistance for urgent medical concerns and inquiries</p>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <h2 class="text-center mb-4">Trusted by Thousands</h2>
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-number">10K+</div>
+            <div class="stat-label">Patients Served</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Medical Professionals</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Satisfaction Rate</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Years of Excellence</div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <h2 class="section-title">What Our Patients Say</h2>
+    <div class="testimonials-grid">
+        <div class="testimonial-card">
+            <p class="testimonial-text">"The care I received at Moonway Medical was exceptional. The staff truly listened to my concerns and provided personalized treatment."</p>
+            <div class="testimonial-author">
+                <div class="author-avatar">SL</div>
+                <div class="author-info">
+                    <h5>Sarah Lee</h5>
+                    <p>Patient since 2022</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonial-card">
+            <p class="testimonial-text">"The online appointment system makes it so easy to schedule visits. I love being able to access my medical records anytime."</p>
+            <div class="testimonial-author">
+                <div class="author-avatar">JC</div>
+                <div class="author-info">
+                    <h5>James Chen</h5>
+                    <p>Patient since 2021</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonial-card">
+            <p class="testimonial-text">"Professional, caring, and efficient. Moonway Medical has become my family's trusted healthcare provider."</p>
+            <div class="testimonial-author">
+                <div class="author-avatar">MP</div>
+                <div class="author-info">
+                    <h5>Maria Patel</h5>
+                    <p>Patient since 2020</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <h2 class="cta-title">Ready to Experience Better Healthcare?</h2>
+    <p class="cta-description">Join thousands of patients who trust Moonway Medical for their healthcare needs</p>
+    <div class="hero-buttons">
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('register') }}" class="hero-btn hero-btn-primary">
+            <i class="fas fa-user-plus"></i> Create Account
+        </a>
+        {% elif current_user.role_level == 0 %}
+        <a href="{{ url_for('appointment') }}" class="hero-btn hero-btn-primary">
+            <i class="fas fa-calendar-check"></i> Book Your Appointment
+        </a>
+        {% endif %}
+        <a href="{{ url_for('feedback') }}" class="hero-btn hero-btn-secondary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+            <i class="fas fa-envelope"></i> Contact Us
+        </a>
+    </div>
+</section>
+
+<div style="height: 3rem;"></div>
+{% endblock %}

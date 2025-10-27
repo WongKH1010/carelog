@@ -1,0 +1,38 @@
+<!--{% extends "base.html" %}-->
+
+<!--{% block content %}-->
+<!--<div class="d-flex justify-content-center align-items-center vh-50">-->
+<!--    <div class="card shadow p-4 v-50 w-75" style="width: 400px;">-->
+<!--        <h3 class="text-center mb-3">Appointments</h3>-->
+<!--        {% if current_user.role_level == 0 %}-->
+<!--        <a href="{{ url_for('create_appointment') }}" class="btn btn-primary">Book an appointment</a>-->
+<!--        {% endif %}-->
+<!--        <div class="accordion mt-5">-->
+<!--        {% for appointment in current_user.appointments %}-->
+<!--            <div class="accordion-item">-->
+<!--                <h2 class="accordion-header">-->
+<!--                    <button class="accordion-button" type="button" data-bs-toggle="collapse"-->
+<!--                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">-->
+<!--                        Appointment at {{appointment.date}} {{appointment.time}}-->
+<!--                    </button>-->
+<!--                </h2>-->
+<!--                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">-->
+<!--                    <div class="accordion-body">-->
+<!--                        <p> Doctor: {{ appointment.doctor.username }}-->
+<!--                        <p> Patient: {{ appointment.patient.username }}</p>-->
+<!--                        <p> Reason: {{ appointment.reason }}</p>-->
+<!--                        <p> Status: {{ appointment.status }}</p>-->
+<!--                        {% if appointment.status in ["Pending", "Scheduled"] %}-->
+<!--                        <form action="{{ url_for('cancel_appointment', appointment_id=appointment.id, patient=True) }}" method="POST" style="display:inline;">-->
+<!--                            <button type="submit" class="btn btn-primary signup-button">Cancel Appointment</button>-->
+<!--                        </form>-->
+<!--                        {% endif %}-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            {% endfor %}-->
+<!--        </div>-->
+
+<!--    </div>-->
+<!--</div>-->
+<!--{% endblock %}-->

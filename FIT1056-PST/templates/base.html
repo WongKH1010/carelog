@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    {{ bootstrap.load_css()}}
+    <style>
+            .nav-link {
+              padding: 0.5rem 1rem;
+              color: #ffffff;
+              font-weight: 600;
+              text-decoration: none;
+              border-radius: 8px;
+              transition: all 0.3s ease;
+              display: inline-block;
+            }
+
+            .nav-link:hover {
+              background: rgba(255, 255, 255, 0.205);
+              color: #ffffff;
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(80, 80, 80, 0.4);
+            }
+
+            /* Active/Current page - stays highlighted */
+            .nav-link.active {
+              background: rgba(255, 255, 255, 0.205);
+              color: #667eea;
+              box-shadow: 0 4px 12px rgba(80, 80, 80, 0.4);
+            }
+
+            .nav-link.active:hover {
+              background: rgba(255, 255, 255, 0.205);
+              color: #e4e4e4;
+              transform: translateY(0);
+            }
+
+            .nav-link:active {
+              background: rgba(255, 255, 255, 0.205);
+              color: #ffffff;
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(80, 80, 80, 0.4);
+            }
+
+            .nav-link:visited {
+              background-color: rgba(255, 255, 255, 0.205);
+              color: #ffffff;
+            }
+
+            .nav-link:focus {
+              background: rgba(255, 255, 255, 0.205);
+              color: #ffffff;
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(80, 80, 80, 0.4);
+            }
+
+            /* Keep active links white when visited */
+            .nav-link:not(.active):visited {
+              background-color: rgba(255, 255, 255, 0.205);
+              color: #ffffff;
+            }
+
+            .login-button {
+              border: 2px solid #ffffff;
+              color: rgb(173, 42, 134);
+              background: transparent;
+              transition: all 0.3s ease;
+              border-color: rgb(173, 42, 134);
+            }
+
+            .login-button:hover {
+              background: rgba(255, 255, 255, 0.205);
+              border-color: transparent ;
+              color: #ffffff;
+              transform: translateY(-2px);
+            }
+
+            .signup-button:hover {
+              background: rgba(255, 255, 255, 0.205);
+              border-color: transparent ;
+              color: #ffffff;
+              transform: translateY(-2px);
+            }
+
+            .signup-button:active {
+              background: rgba(255, 255, 255, 0.205);
+              border-color: transparent ;
+              color: #ffffff;
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(80, 80, 80, 0.4);
+            }
+
+            .signup-button {
+              background: rgb(216, 63, 147);
+              color: #ffffff;
+              border: 2px solid rgb(216, 63, 147);
+              transition: all 0.3s ease;
+            }
+
+            .zi{
+                font-size: larger;
+                text-shadow: #8b8b8b 1px 1px 2px;
+            }
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {% block style %}
+    {% endblock %}
+</head>
+<body>
+<div class="container-fluid" style="background: rgb(233, 165, 176);">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-5 border-secondary-subtle">
+      <div class="col-md-3 mb-2 mb-md-0">
+        <a href="{{ url_for('home') }}" class="d-inline-flex align-items-center text-decoration-none px-3">
+            <img src="{{ url_for('static', filename='assets/logo.png') }}" alt="Moonway Medical Logo" style="height: 60px; width: auto;">
+        </a>
+    </div>
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <li><a href="{{ url_for('home') }}" class="nav-link px-3 zi {{ 'active' if request.endpoint == 'home' }}"><span>Home</span></a></li>
+            <li><a href="{{ url_for('about') }}" class="nav-link px-3 zi {{ 'active' if request.endpoint == 'about' }}">About</a></li>
+            {% if current_user.role_level == 0 %}
+            <li><a href="{{ url_for('appointment') }}" class="nav-link px-3 zi {{ 'active' if request.endpoint == 'appointment' }}">Appointment</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('feedback') }}" class="nav-link px-3 zi {{ 'active' if request.endpoint == 'feedback' }}">Feedback</a></li>
+            {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('profile') }}" class="nav-link px-3 zi {{ 'active' if request.endpoint == 'profile' }}">Profile</a></li>
+            {% endif %}
+        </ul>
+        <div class="col-md-3 text-end">
+            {% if current_user.is_authenticated %}
+            {% if current_user.role_level == 4 %}
+            <a href="{{ url_for('admin') }}" class="btn btn-outline-primary me-2">Admin Dashboard</a>
+            {% endif %}
+            {% if current_user.role_level in [1,2,3] %}
+            <a href="{{ url_for('staff') }}" class="btn btn-outline-primary me-2">Staff Page</a>
+            {% endif %}
+            <form action="{{ url_for('logout') }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-primary signup-button">Logout</button>
+            </form>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="btn btn-outline-primary me-2 login-button"><b>Login</b></a>
+            <a href="{{ url_for('register') }}" class="btn btn-primary signup-button"><b>Sign Up</b></a>
+            {% endif %}
+        </div>
+    </header>
+</div>
+{% block content %}
+{% endblock %}
+
+{{ bootstrap.load_js() }}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        {% for category, message in messages %}
+          Swal.fire({
+            icon: "{{ category }}",  // success, error, warning, info
+            title: "{{ message }}",
+            showConfirmButton: false,
+            timer: 2000
+          });
+        {% endfor %}
+      });
+    </script>
+  {% endif %}
+{% endwith %}
+
+</body>
+</html>

@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+{% from 'bootstrap4/table.html' import render_table %}
+
+{% block style %}
+<style>
+    body {
+        background: rgba(243, 189, 198, 0.329);
+        min-height: 100vh;
+    }
+
+    /* Profile Card Styling */
+    .profile-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        border: none;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        margin-bottom: 2rem;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .profile-card-header {
+        background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134));
+        color: white;
+        padding: 1.5rem;
+        border: none;
+    }
+
+    .profile-card-header h3 {
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .profile-card-header h3 i {
+        font-size: 1.8rem;
+    }
+
+    .profile-card-body {
+        padding: 2rem;
+        position: relative;
+    }
+
+    /* Info Item Styling */
+    .info-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.2rem;
+        padding: 0.75rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+        background: linear-gradient(90deg, rgba(216, 63, 147, 0.05), rgba(102, 126, 234, 0.05));
+        transform: translateX(5px);
+    }
+
+    .info-icon {
+        color: rgb(216, 63, 147);
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        min-width: 24px;
+    }
+
+    .info-content {
+        flex: 1;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #764ba2;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+        color: #333;
+        font-size: 1rem;
+        word-break: break-word;
+    }
+
+    /* Section Divider */
+    .section-divider {
+        border: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(118, 75, 162, 0.3), transparent);
+        margin: 1.5rem 0;
+    }
+
+    /* Button Styling */
+    .btn-action {
+        background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134));
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(216, 63, 147, 0.3);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 25px rgba(216, 63, 147, 0.5);
+        background: linear-gradient(135deg, rgb(173, 42, 134), rgb(216, 63, 147));
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-action i {
+        font-size: 1.1rem;
+    }
+
+    .btn-create {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-create:hover {
+        background: linear-gradient(135deg, #764ba2, #667eea);
+        box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-container {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .btn-bottom-right {
+        position: absolute;
+        bottom: 1.5rem;
+        right: 1.5rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h5 {
+        color: #764ba2;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        color: #999;
+        margin-bottom: 2rem;
+    }
+
+    /* Table Styling */
+    .table {
+        margin-top: 0;
+        border-radius: 0;
+        overflow: hidden;
+    }
+
+    .table thead {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .table thead th {
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody tr {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .table tbody tr:hover {
+        background: linear-gradient(90deg, rgba(216, 63, 147, 0.08), rgba(102, 126, 234, 0.08));
+        transform: scale(1.002);
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-color: #f5f5f5;
+    }
+
+    /* Badge Styling */
+    .gender-badge {
+        display: inline-block;
+        padding: 0.35rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .gender-male {
+        background: rgba(102, 126, 234, 0.15);
+        color: #667eea;
+    }
+
+    .gender-female {
+        background: rgba(216, 63, 147, 0.15);
+        color: rgb(216, 63, 147);
+    }
+
+    .gender-other {
+        background: rgba(118, 75, 162, 0.15);
+        color: #764ba2;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .profile-card-body {
+            padding: 1.5rem;
+        }
+
+        .btn-bottom-right {
+            position: static;
+            margin-top: 1.5rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .info-item {
+            flex-direction: column;
+        }
+
+        .info-icon {
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    /* Custom scrollbar */
+    .table-responsive::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 10px;
+    }
+</style>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-9">
+
+            <!-- Basic Information Card -->
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <h3>
+                        <i class="fas fa-user-circle"></i>
+                        {{ patient.username }}'s Profile
+                    </h3>
+                </div>
+                <div class="profile-card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-id-card info-icon"></i>
+                                <div class="info-content">
+                                    <div class="info-label">Username</div>
+                                    <div class="info-value">{{ patient.username }}</div>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-envelope info-icon"></i>
+                                <div class="info-content">
+                                    <div class="info-label">Email</div>
+                                    <div class="info-value">{{ patient.email }}</div>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-venus-mars info-icon"></i>
+                                <div class="info-content">
+                                    <div class="info-label">Gender</div>
+                                    <div class="info-value">
+                                        <span class="gender-badge {% if patient.gender|lower == 'male' %}gender-male{% elif patient.gender|lower == 'female' %}gender-female{% else %}gender-other{% endif %}">
+                                            {{ patient.gender }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-calendar-alt info-icon"></i>
+                                <div class="info-content">
+                                    <div class="info-label">Date of Birth</div>
+                                    <div class="info-value">{{ patient.dob }}</div>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone info-icon"></i>
+                                <div class="info-content">
+                                    <div class="info-label">Contact</div>
+                                    <div class="info-value">{{ patient.contact }}</div>
+                                </div>
+                            </div>
+                            {% if current_user.role_level in [1,3,4] %}
+                            <a href="{{ url_for('staff_create_appointment', patient_id=patient.id, staff=True) }}" class="btn btn-action btn-bottom-right">
+                            <i class="fas fa-edit"></i>
+                            Create appointment
+                        </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patient Profile Card -->
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <h3>
+                        <i class="fas fa-notes-medical"></i>
+                        Medical Profile
+                    </h3>
+                </div>
+                <div class="profile-card-body">
+                    {% if patient.patient_profile %}
+                        <div class="info-item">
+                            <i class="fas fa-globe-asia info-icon"></i>
+                            <div class="info-content">
+                                <div class="info-label">Cultural Preferences</div>
+                                <div class="info-value">{{ patient.patient_profile.cultural }}</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-utensils info-icon"></i>
+                            <div class="info-content">
+                                <div class="info-label">Dietary Preferences</div>
+                                <div class="info-value">{{ patient.patient_profile.dietary }}</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-allergies info-icon"></i>
+                            <div class="info-content">
+                                <div class="info-label">Allergens</div>
+                                <div class="info-value">{{ patient.patient_profile.allergens }}</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-file-medical info-icon"></i>
+                            <div class="info-content">
+                                <div class="info-label">Medical History</div>
+                                <div class="info-value">{{ patient.patient_profile.medical_history }}</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-file-medical info-icon"></i>
+                            <div class="info-content">
+                                <div class="info-label">Risk Level</div>
+                                <div class="info-value">{{ patient.patient_profile.risk_level }}</div>
+                            </div>
+                        </div>
+                    {% if current_user.role_level in [2,3,4] %}
+                        <a href="{{ url_for('edit_profile_staff', patient_id=patient.id, staff=True) }}" class="btn btn-action btn-bottom-right">
+                            <i class="fas fa-edit"></i>
+                            Edit Profile
+                        </a>
+                    {% endif %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-file-medical-alt"></i>
+                            <h5>No Medical Profile Yet</h5>
+                            {% if current_user.role_level in [1,4] %}
+                            <p>Create a medical profile to track patient information</p>
+                            <a href="{{ url_for('create_profile_staff', patient_id=patient.id) }}" class="btn btn-action btn-create">
+                                <i class="fas fa-plus-circle"></i>
+                                Create Medical Profile
+                            </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Patient Logs Card -->
+            {% if patient.patient_profile and current_user.role_level in [2,3] %}
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <h3>
+                        <i class="fas fa-clipboard-list"></i>
+                        Patient Logs
+                    </h3>
+                </div>
+                <div class="profile-card-body" style="padding-bottom: 4.5rem;">
+                    {% if log_list|length > 0 %}
+                        <div class="table-responsive">
+                            {{ render_table(log_list, titles=titles, safe_columns=("edit")) }}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-clipboard"></i>
+                            <h5>No Patient Logs</h5>
+                            <p>Start tracking patient progress by adding a new log</p>
+                        </div>
+                    {% endif %}
+                    {% if current_user.role_level in [2,3] %}
+                    <a href="{{ url_for('create_patient_log', patient_id=patient.id) }}" class="btn btn-action btn-bottom-right">
+                        <i class="fas fa-plus-circle"></i>
+                        Add New Log
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

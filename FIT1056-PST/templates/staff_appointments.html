@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+
+{% block style %}
+<style>
+    body {
+        background: rgba(243, 189, 198, 0.329);
+        min-height: 100vh;
+    }
+
+    .appointments-container {
+        padding: 2rem 0;
+        min-height: calc(100vh - 200px);
+    }
+
+    .page-header {
+        text-align: center;
+        color: white;
+        margin-bottom: 3rem;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .appointments-section {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .appointments-section:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .section-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid transparent;
+        background: linear-gradient(white, white), linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-clip: padding-box, border-box;
+        background-origin: padding-box, border-box;
+        display: inline-block;
+    }
+
+    .section-badge {
+        display: inline-block;
+        padding: 0.35rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-left: 0.75rem;
+        vertical-align: middle;
+    }
+
+    .badge-assigned {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .badge-pending {
+        background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+        color: white;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #718096;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .accordion {
+        margin-top: 1rem;
+    }
+
+    .accordion-item {
+        border: none;
+        border-radius: 12px !important;
+        overflow: hidden;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .accordion-item:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+
+    .accordion-button {
+        background: white;
+        color: #2d3748;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 1.25rem 1.5rem;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: none;
+    }
+
+    .accordion-button:focus {
+        box-shadow: none;
+        border: none;
+    }
+
+    .accordion-button::after {
+        filter: brightness(0) saturate(100%) invert(28%) sepia(8%) saturate(706%) hue-rotate(169deg);
+    }
+
+    .accordion-button:not(.collapsed)::after {
+        filter: brightness(0) invert(1);
+    }
+
+    .accordion-body {
+        padding: 1.5rem;
+        background: #f8f9fa;
+    }
+
+    .appointment-detail {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        background: white;
+        border-radius: 8px;
+        border-left: 3px solid #667eea;
+    }
+
+    .appointment-detail strong {
+        min-width: 100px;
+        color: #4a5568;
+        font-weight: 600;
+    }
+
+    .appointment-detail span {
+        color: #2d3748;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.35rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .status-scheduled {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .status-pending {
+        background: #fff3e0;
+        color: #f57c00;
+    }
+
+    .status-completed {
+        background: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .status-cancelled {
+        background: #ffebee;
+        color: #d32f2f;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .btn-complete {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        flex: 1;
+    }
+
+    .btn-complete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
+
+    .btn-cancel {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        flex: 1;
+    }
+
+    .btn-cancel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        color: white;
+    }
+
+    .btn-accept {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-accept:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .appointment-icon {
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="appointments-container">
+    <div class="container">
+        <div class="page-header">
+            <h1>📅 Appointment Management</h1>
+            <p>Manage your assigned and pending appointments</p>
+        </div>
+
+        <!-- Assigned Appointments Section -->
+        <div class="appointments-section">
+            <h3 class="section-title">
+                <span class="appointment-icon">👨‍⚕️</span>My Appointments
+                <span class="section-badge badge-assigned">{{ user_appointments|length }}</span>
+            </h3>
+            
+            {% if user_appointments %}
+            <div class="accordion" id="assignedAccordion">
+                {% for appointment in user_appointments %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#assigned{{ loop.index }}" aria-expanded="false" aria-controls="assigned{{ loop.index }}">
+                            📆 Appointment on {{ appointment.date }} at {{ appointment.time }}
+                        </button>
+                    </h2>
+                    <div id="assigned{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#assignedAccordion">
+                        <div class="accordion-body">
+                            <div class="appointment-detail">
+                                <strong>🩺 Doctor:</strong>
+                                <span>{{ appointment.doctor.username if appointment.doctor else 'Not assigned' }}</span>
+                            </div>
+                            <div class="appointment-detail">
+                                <strong>👤 Patient:</strong>
+                                <span>{{ appointment.patient.username }}</span>
+                            </div>
+                            <div class="appointment-detail">
+                                <strong>📋 Reason:</strong>
+                                <span>{{ appointment.reason }}</span>
+                            </div>
+                            <div class="appointment-detail">
+                                <strong>📊 Status:</strong>
+                                <span class="status-badge status-{{ appointment.status|lower }}">{{ appointment.status }}</span>
+                            </div>
+                            
+                            {% if appointment.status == "Scheduled" %}
+                            <div class="action-buttons">
+                                <form action="{{ url_for('complete_appointment', appointment_id=appointment.id) }}" method="POST" style="flex: 1;">
+                                    <button type="submit" class="btn-complete">✓ Complete</button>
+                                </form>
+                                <form action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}" method="POST" style="flex: 1;">
+                                    <button type="submit" class="btn-cancel">✗ Cancel</button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <p>No assigned appointments yet</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Pending Appointments Section -->
+        <div class="appointments-section">
+            <h3 class="section-title">
+                <span class="appointment-icon">⏳</span>Pending Appointments
+                <span class="section-badge badge-pending">{{ pending_appointments|length }}</span>
+            </h3>
+            
+            {% if pending_appointments %}
+            <div class="accordion" id="pendingAccordion">
+                {% for appointment in pending_appointments %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#pending{{ loop.index }}" aria-expanded="false" aria-controls="pending{{ loop.index }}">
+                            📆 Appointment on {{ appointment.date }} at {{ appointment.time }}
+                        </button>
+                    </h2>
+                    <div id="pending{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#pendingAccordion">
+                        <div class="accordion-body">
+                            <div class="appointment-detail">
+                                <strong>🩺 Doctor:</strong>
+                                <span>{{ appointment.doctor.username if appointment.doctor else 'Not assigned' }}</span>
+                            </div>
+                            <div class="appointment-detail">
+                                <strong>👤 Patient:</strong>
+                                <span>{{ appointment.patient.username }}</span>
+                            </div>
+                            <div class="appointment-detail">
+                                <strong>📋 Reason:</strong>
+                                <span>{{ appointment.reason }}</span>
+                            </div>
+                            <div class="appointment-detail">
+                                <strong>📊 Status:</strong>
+                                <span class="status-badge status-{{ appointment.status|lower }}">{{ appointment.status }}</span>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <form action="{{ url_for('accept_appointment', appointment_id=appointment.id) }}" method="POST" style="width: 100%;">
+                                    <button type="submit" class="btn-accept">✓ Accept Appointment</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">✅</div>
+                <p>No pending appointments at the moment</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

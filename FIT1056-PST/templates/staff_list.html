@@ -1,0 +1,418 @@
+{% extends "base.html" %}
+{% from 'bootstrap4/form.html' import render_form %}
+{% from 'bootstrap4/table.html' import render_table %}
+
+{% block style %}
+<style>
+    body {
+        background: rgba(243, 189, 198, 0.329);
+        min-height: 100vh;
+    }
+
+    /* Search Card Styling */
+    .search-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        border: none;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+
+    .search-card-header {
+        background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134));
+        color: white;
+        padding: 1.5rem;
+        border: none;
+    }
+
+    .search-card-header h4 {
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .search-card-header h4 i {
+        font-size: 1.5rem;
+    }
+
+    .search-card-body {
+        padding: 2rem;
+    }
+
+    /* Results Card Styling */
+    .results-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        border: none;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    .results-card-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 1.5rem;
+        border: none;
+    }
+
+    .results-card-header h4 {
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .results-card-header h4 i {
+        font-size: 1.5rem;
+    }
+
+    .results-card-body {
+        padding: 2rem;
+    }
+
+    /* Form Elements */
+    .form-label {
+        color: #764ba2;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-label i {
+        color: rgb(216, 63, 147);
+        font-size: 1rem;
+    }
+
+    .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus {
+        border-color: rgb(216, 63, 147);
+        box-shadow: 0 0 0 0.2rem rgba(216, 63, 147, 0.25);
+        transform: translateY(-2px);
+    }
+
+    .form-control::placeholder {
+        color: #b0b0b0;
+        font-style: italic;
+    }
+
+    .input-group {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #764ba2;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    .form-control.with-icon {
+        padding-left: 2.75rem;
+    }
+
+    /* Button Styling */
+    .btn-search {
+        background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134));
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(216, 63, 147, 0.3);
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .btn-search:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 25px rgba(216, 63, 147, 0.5);
+        background: linear-gradient(135deg, rgb(173, 42, 134), rgb(216, 63, 147));
+        color: white;
+    }
+
+    .btn-search:active {
+        transform: translateY(-1px);
+    }
+
+    .btn-search i {
+        font-size: 1.1rem;
+    }
+
+    /* Age Range Styling */
+    .age-range-container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .age-divider {
+        color: rgb(216, 63, 147);
+        font-weight: 700;
+        font-size: 1.3rem;
+        padding: 0 0.25rem;
+    }
+
+    /* Filter Section */
+    .filter-section {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-top: 1.5rem;
+        border: 2px dashed rgba(118, 75, 162, 0.2);
+    }
+
+    .filter-section-title {
+        color: #667eea;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-section-title i {
+        font-size: 1.2rem;
+    }
+
+    /* Table Styling */
+    .table {
+        margin-top: 0;
+        border-radius: 0;
+        overflow: hidden;
+    }
+
+    .table thead {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .table thead th {
+        border: none;
+        padding: 1.2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.8px;
+    }
+
+    .table tbody tr {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .table tbody tr:hover {
+        background: linear-gradient(90deg, rgba(216, 63, 147, 0.08), rgba(102, 126, 234, 0.08));
+        transform: scale(1.005);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .table tbody td {
+        padding: 1.2rem;
+        vertical-align: middle;
+        border-color: #f5f5f5;
+    }
+
+    /* Badge for count */
+    .result-count {
+        background: rgba(255, 255, 255, 0.3);
+        padding: 0.35rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-left: 0.75rem;
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .search-card-body,
+        .results-card-body {
+            padding: 1.5rem;
+        }
+
+        .btn-search {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .filter-section {
+            margin-top: 1rem;
+        }
+    }
+
+    /* Custom scrollbar */
+    .table-responsive::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 10px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #764ba2, #667eea);
+    }
+.disabled-link {
+  color: light_gray;
+  pointer-events: none;  /* disables clicking */
+  text-decoration: none;
+  cursor: default;
+  opacity: 0.6;
+}
+</style>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-11">
+
+            <!-- Search Card -->
+            <div class="card search-card">
+                <div class="search-card-header">
+                    <h4>
+                        <i class="fas fa-search"></i>
+                        Search & Filter Accounts
+                    </h4>
+                </div>
+                <div class="search-card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+
+                        <!-- Main Search -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="form-label">
+                                    <i class="fas fa-user-injured"></i>
+                                    Account Search
+                                </label>
+                                <div class="input-group">
+                                    <i class="fas fa-search input-icon"></i>
+                                    {{ form.search(class="form-control with-icon", placeholder="Search by name or email") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filter Section -->
+                        <div class="filter-section">
+                            <div class="filter-section-title">
+                                <i class="fas fa-filter"></i>
+                                Advanced Filters
+                            </div>
+                            <div class="row g-3">
+                                <!-- Gender -->
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label">
+                                        <i class="fas fa-venus-mars"></i>
+                                        Gender
+                                    </label>
+                                    {{ form.gender(class="form-control") }}
+                                </div>
+
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Role
+                                    </label>
+                                    {{ form.role(class="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-search">
+                                    <i class="fas fa-search"></i>
+                                    Apply Filters
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Card -->
+            <div class="card results-card">
+                <div class="results-card-header">
+                    <h4>
+                        <i class="fas fa-users"></i>
+                        Account Results
+                        <span class="result-count">{{ account_list|length }} accounts</span>
+                    </h4>
+                </div>
+                <div class="results-card-body">
+                    {% if account_list|length > 0 %}
+                    <div class="table-responsive">
+                        {{ render_table(account_list, titles=titles, safe_columns=("change")) }}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h5>No accounts found</h5>
+                        <p>Try adjusting your search or filter criteria</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Add smooth scroll to results after form submission
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.toString()) {
+        setTimeout(() => {
+            document.querySelector('.results-card').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 100);
+    }
+});
+</script>
+{% endblock %}

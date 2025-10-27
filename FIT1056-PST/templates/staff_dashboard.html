@@ -1,0 +1,649 @@
+{% extends "base.html" %}
+
+{% block title %} Staff Dashboard {% endblock %}
+
+{% block style %}
+{{ super() }}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: rgba(243, 189, 198, 0.329);
+            min-height: 100vh;
+        }
+
+        .staff-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .dashboard-header h1 {
+            color: #764ba2;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header h1 i {
+            color: rgb(216, 63, 147);
+            margin-right: 0.75rem;
+        }
+
+        .welcome-section {
+            background: linear-gradient(135deg, rgba(216, 63, 147, 0.1), rgba(173, 42, 134, 0.1));
+            border-left: 4px solid rgb(216, 63, 147);
+            padding: 1.25rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .welcome-section h5 {
+            color: #764ba2;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-section p {
+            color: #666;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .main-stat-card {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            opacity: 0.1;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .main-stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+        }
+
+        .main-stat-card:hover::before {
+            transform: scale(1.5);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .icon-patients { 
+            background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134)); 
+            color: white; 
+        }
+        .icon-appointments { 
+            background: linear-gradient(135deg, #667eea, #764ba2); 
+            color: white; 
+        }
+        .icon-reports { 
+            background: linear-gradient(135deg, #43e97b, #38f9d7); 
+            color: white; 
+        }
+        .icon-risk { 
+            background: linear-gradient(135deg, #fa709a, #fee140); 
+            color: white; 
+        }
+
+        .main-stat-card.patients::before { color: rgb(216, 63, 147); }
+        .main-stat-card.appointments::before { color: #667eea; }
+        .main-stat-card.reports::before { color: #43e97b; }
+        .main-stat-card.risk::before { color: #fa709a; }
+
+        .stat-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .stat-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.75rem;
+            background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134));
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(216, 63, 147, 0.3);
+        }
+
+        .main-stat-card.appointments .stat-action {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .main-stat-card.reports .stat-action {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            box-shadow: 0 4px 12px rgba(67, 233, 123, 0.3);
+        }
+
+        .main-stat-card.risk .stat-action {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            box-shadow: 0 4px 12px rgba(250, 112, 154, 0.3);
+        }
+
+        .stat-action:hover {
+            transform: translateX(5px);
+            color: white;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        .stat-action i {
+            transition: transform 0.3s ease;
+        }
+
+        .stat-action:hover i {
+            transform: translateX(3px);
+        }
+
+        /* Patient Sub-Categories */
+        .subcategories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 2px solid rgba(216, 63, 147, 0.2);
+        }
+
+        .subcategory-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem;
+            background: linear-gradient(135deg, rgba(216, 63, 147, 0.05), rgba(173, 42, 134, 0.05));
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .subcategory-item:hover {
+            background: linear-gradient(135deg, rgba(216, 63, 147, 0.15), rgba(173, 42, 134, 0.15));
+            transform: translateX(5px);
+            color: rgb(216, 63, 147);
+        }
+
+        .subcategory-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgb(216, 63, 147), rgb(173, 42, 134));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .subcategory-text {
+            flex: 1;
+        }
+
+        .subcategory-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.15rem;
+        }
+
+        .subcategory-count {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        /* Quick Actions Section */
+        .quick-actions {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            backdrop-filter: blur(10px);
+        }
+
+        .quick-actions h3 {
+            color: #764ba2;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .quick-actions h3 i {
+            color: rgb(216, 63, 147);
+            font-size: 1.5rem;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(216, 63, 147, 0.05), rgba(173, 42, 134, 0.05));
+            border: 2px solid rgba(216, 63, 147, 0.2);
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+
+        .action-btn:hover {
+            border-color: rgb(216, 63, 147);
+            background: linear-gradient(135deg, rgba(216, 63, 147, 0.15), rgba(173, 42, 134, 0.15));
+            transform: translateY(-5px);
+            color: rgb(216, 63, 147);
+            box-shadow: 0 8px 20px rgba(216, 63, 147, 0.2);
+        }
+
+        .action-btn i {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            display: block;
+            color: rgb(216, 63, 147);
+        }
+
+        .action-btn div {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Recent Activity */
+        .recent-activity {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            backdrop-filter: blur(10px);
+        }
+
+        .recent-activity h3 {
+            color: #764ba2;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .recent-activity h3 i {
+            color: rgb(216, 63, 147);
+            font-size: 1.5rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1.25rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .activity-item:hover {
+            background: linear-gradient(90deg, rgba(216, 63, 147, 0.05), rgba(102, 126, 234, 0.05));
+            transform: translateX(5px);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.25rem;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .activity-content {
+            flex-grow: 1;
+        }
+
+        .activity-title {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .activity-time {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .staff-container {
+                padding: 1rem;
+            }
+
+            .dashboard-header {
+                padding: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .subcategories-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dashboard {
+              border: 2px solid #ffffff;
+              color: rgb(173, 42, 134);
+              background: transparent;
+              transition: all 0.3s ease;
+              border-color: rgb(173, 42, 134);
+              border-radius: 200px;
+            }
+
+        .dashboard:hover {
+              background: rgba(255, 255, 255, 0.205);
+              border-color: transparent ;
+              color: #ffffff;
+              transform: translateY(-2px);
+            }
+        
+        .btn-danger {
+              border-radius: 200px;
+            }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-stat-card {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .main-stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .main-stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .main-stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .main-stat-card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="staff-container">
+        <div class="dashboard-header">
+            <h1><i class="fas fa-user-md"></i> Staff Dashboard</h1>
+            <p class="text-muted mb-0">Welcome back! Manage your patients and daily tasks</p>
+            
+            <div class="welcome-section">
+                <h5><i class="fas fa-calendar-day"></i> Today's Overview</h5>
+                <p>{{ current_user.username }} • <span id="current-date"></span>{% if current_user.role_level == 3 %} • You have pending tasks and appointments to review {% endif %}</p>
+            </div>
+        </div>
+
+        <!-- Main Management Categories -->
+        <div class="stats-grid">
+            <!-- Patients Category with Sub-categories -->
+            <div class="main-stat-card patients">
+                <div class="stat-icon icon-patients">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-title">Patient Management</div>
+                <div class="stat-description">Comprehensive patient care and record management</div>
+                <a href="{{ url_for('patient_page') }}" class="stat-action">
+                    View All Patients <i class="fas fa-arrow-right"></i>
+                </a>
+                
+                <!-- Patient Sub-categories -->
+                <div class="subcategories-grid">
+                    <a href="{{ url_for('patient_page') }}" class="subcategory-item">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <div class="subcategory-text">
+                            <div class="subcategory-title">Patient List</div>
+                            <div class="subcategory-count">View & search all</div>
+                        </div>
+                    </a>
+                    
+                    <a href="{{ url_for('patient_page') }}" class="subcategory-item">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <div class="subcategory-text">
+                            <div class="subcategory-title">Medical Records</div>
+                            <div class="subcategory-count">View profiles</div>
+                        </div>
+                    </a>
+                    
+                    <a href="{{ url_for('patient_page') }}" class="subcategory-item">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="subcategory-text">
+                            <div class="subcategory-title">Patient Logs</div>
+                            <div class="subcategory-count">Track progress</div>
+                        </div>
+                    </a>
+                    
+                    <a href="{{ url_for('patient_page') }}" class="subcategory-item">
+                        <div class="subcategory-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="subcategory-text">
+                            <div class="subcategory-title">Search Patients</div>
+                            <div class="subcategory-count">Find quickly</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Appointments -->
+            {% if current_user.role_level in [2,3] %}
+            <div class="main-stat-card appointments">
+                <div class="stat-icon icon-appointments">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-title">Appointments</div>
+                <div class="stat-description">Schedule, view, and manage patient appointments and visits</div>
+                <a href="{{ url_for('staff_appointment') }}" class="stat-action">
+                    View Schedule <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Reports & Analytics -->
+            <div class="main-stat-card reports">
+                <div class="stat-icon icon-reports">
+                    <i class="fas fa-file-medical-alt"></i>
+                </div>
+                <div class="stat-title">Reports & Analytics</div>
+                <div class="stat-description">Generate reports, view statistics, and analyze patient data</div>
+                <a href="{{ url_for('reports') }}" class="stat-action">
+                    View Reports <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Risk Dashboard -->
+            <div class="main-stat-card risk">
+                <div class="stat-icon icon-risk">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-title">Risk Dashboard</div>
+                <div class="stat-description">Monitor high-risk patients and priority alerts</div>
+                <a href="{{ url_for('risk_dashboard') }}" class="stat-action">
+                    View Risks <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+            <div class="action-grid">
+                <a href="{{ url_for('patient_page') }}" class="action-btn">
+                    <i class="fas fa-search"></i>
+                    <div>Search Patients</div>
+                </a>
+                <a href="{{ url_for('patient_page') }}" class="action-btn">
+                    <i class="fas fa-notes-medical"></i>
+                    <div>Patient Records</div>
+                </a>
+                {% if current_user.role_level in [2,3] %}
+                <a href="{{ url_for('reports') }}" class="action-btn">
+                    <i class="fas fa-chart-bar"></i>
+                    <div>Generate Report</div>
+                </a>
+                {% endif %}
+                <a href="{{ url_for('profile') }}" class="action-btn">
+                    <i class="fas fa-user-cog"></i>
+                    <div>My Profile</div>
+                </a>
+            </div>
+        </div>
+
+<!--        &lt;!&ndash; Recent Activity &ndash;&gt;-->
+<!--        <div class="recent-activity">-->
+<!--            <h3><i class="fas fa-history"></i> Recent Activity</h3>-->
+<!--            <div class="mt-3">-->
+<!--                <div class="activity-item">-->
+<!--                    <div class="activity-icon icon-patients">-->
+<!--                        <i class="fas fa-user-plus"></i>-->
+<!--                    </div>-->
+<!--                    <div class="activity-content">-->
+<!--                        <div class="activity-title">New patient profile created</div>-->
+<!--                        <div class="activity-time">You • 1 hour ago</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="activity-item">-->
+<!--                    <div class="activity-icon icon-appointments">-->
+<!--                        <i class="fas fa-calendar-check"></i>-->
+<!--                    </div>-->
+<!--                    <div class="activity-content">-->
+<!--                        <div class="activity-title">Appointment scheduled with John Doe</div>-->
+<!--                        <div class="activity-time">You • 2 hours ago</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="activity-item">-->
+<!--                    <div class="activity-icon icon-patients">-->
+<!--                        <i class="fas fa-notes-medical"></i>-->
+<!--                    </div>-->
+<!--                    <div class="activity-content">-->
+<!--                        <div class="activity-title">Patient log updated</div>-->
+<!--                        <div class="activity-time">You • 3 hours ago</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="activity-item">-->
+<!--                    <div class="activity-icon icon-reports">-->
+<!--                        <i class="fas fa-file-alt"></i>-->
+<!--                    </div>-->
+<!--                    <div class="activity-content">-->
+<!--                        <div class="activity-title">Monthly report generated</div>-->
+<!--                        <div class="activity-time">System • 5 hours ago</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="activity-item">-->
+<!--                    <div class="activity-icon icon-risk">-->
+<!--                        <i class="fas fa-bell"></i>-->
+<!--                    </div>-->
+<!--                    <div class="activity-content">-->
+<!--                        <div class="activity-title">High-risk patient alert reviewed</div>-->
+<!--                        <div class="activity-time">You • 6 hours ago</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add current date
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateElement = document.getElementById('current-date');
+            if (dateElement) {
+                const today = new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                dateElement.textContent = today;
+            }
+        });
+    </script>
+{% endblock %}
